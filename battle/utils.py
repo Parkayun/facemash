@@ -6,6 +6,20 @@ def get_friends(fb_id, access_token):
     
     import requests
     res = requests.get(url)
+    return res.content
 
-    import json
-    return json.loads(res.content)
+
+def process_friends(friends, summoner):
+    from battle.models import Warrior
+
+    for friend in friends:
+        fb_id = friend['id']
+        fb_image_url = friend['picture']['data']['url']
+        try:
+            warrior = Warrior.objects.get(fb_id=fb_id, summoner=summoner)
+            if warrior.fb_image_url != fb_image_url:
+                warrior.fb_image_url = fb_image_url
+                warrior.save()
+        except Warrior.DoesNotExist:
+            Warrior.objects.create(fb_id=fb_id, fb_image_url=fb_image_url,   
+                                   summoner=summoner)
