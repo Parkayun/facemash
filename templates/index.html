@@ -47,12 +47,12 @@ td {font-size:11px;}
 		<td>Score: {{ warriors.1.get_all_summoner_data.score}}</td>
 	</tr>
 	<tr>
-		<td>Expected: <?=round(expected($images[1]->score, $images[0]->score), 4)?></td>
-		<td>Expected: <?=round(expected($images[0]->score, $images[1]->score), 4)?></td>
+		<td>Expected: {{ expected.first }}</td>
+		<td>Expected: {{ expected.second }}</td>
 	</tr>
 </table>
 </center>
-
+<!--
 <h2>Top Rated</h2>
 <center>
 <table>
@@ -85,9 +85,19 @@ td {font-size:11px;}
 	*/ ?>
 </table>
 </center>
-
-{{ warriors.0.get_all_summoner_data }}
-{{ warriors.1.fb_id }}
+-->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript">
+	$(document).ready(function() {
+		$('.image a').on('click', function(e) {
+			e.preventDefault();
+			var wFbId = $(e.currentTarget).attr('data-fb-id');
+			$.get('/battle', {'w': wFbId}, function(data) {
+				console.log(data);
+			});
+		});
+	});
+</script>
 
 {% endif %}
 </body>

@@ -14,4 +14,5 @@ urlpatterns = patterns('',
     url(r'^accounts/', include('django_facebook.auth_urls')),
 
     url(r'^$', 'battle.views.index', name='index'),
+    url(r'^battle$', 'battle.views.battle', name='battle'),
 )

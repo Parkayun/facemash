@@ -89,9 +89,10 @@ def battle(request):
             'wins': winner.wins
         }
 
-    except Warrior.DoesNotExists:
+        result['status'] = 'success'
+
+    except Warrior.DoesNotExist:
         result['message'] = u'잘못된 배틀입니다.'
 
-    result['status'] = 'success'
 
     return HttpResponse(json.dumps(result),content_type='application/json')
