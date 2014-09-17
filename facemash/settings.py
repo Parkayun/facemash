@@ -36,6 +36,8 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'django_facebook',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -51,6 +53,24 @@ ROOT_URLCONF = 'facemash.urls'
 
 WSGI_APPLICATION = 'facemash.wsgi.application'
 
+# Template definition
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.media',
+    'django.core.context_processors.static',
+    'django.core.context_processors.tz',
+    'django.contrib.messages.context_processors.messages',
+    'django.core.context_processors.request',
+
+    'django_facebook.context_processors.facebook',
+)
+
+TEMPLATE_DIRS = (
+    os.path.join(BASE_DIR, 'templates'),
+)
 
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
@@ -80,3 +100,21 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
+
+# Facebook Setting
+
+AUTHENTICATION_BACKENDS = ('django_facebook.auth_backends.FacebookBackend',)
+
+FACEBOOK_APP_ID = ''
+
+FACEBOOK_APP_SECRET = ''
+
+AUTH_USER_MODEL = 'django_facebook.FacebookCustomUser'
+
+AUTH_PROFILE_MODULE = 'django_facebook.FacebookProfile'
+
+AUTHENTICATION_BACKENDS = ('django_facebook.auth_backends.FacebookBackend',)
