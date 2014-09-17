@@ -13,11 +13,14 @@ class Warrior(models.Model):
     losses = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 
-
-class RawWarrior(models.Model):
-    summoner = models.ForeignKey(Profile)
-    raw = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
+    def get_all_summoner_data(self):
+        data = Warrior.objects.filter(fb_id=self.fb_id)
+        data_len = len(data)
+        return {
+            'score': data.aggregate(models.Sum('score'))['score__sum'] / data_len,
+            'wins':  data.aggregate(models.Sum('wins'))['wins__sum'],
+            'losses': data.aggregate(models.Sum('losses'))['losses__sum'] 
+        }
 
 
 class Battle(models.Model):

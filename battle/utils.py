@@ -9,7 +9,7 @@ def get_friends(fb_id, access_token):
     return res.content
 
 
-def process_friends(friends, summoner):
+def make_warriors(friends, summoner):
     from battle.models import Warrior
 
     for friend in friends:
@@ -23,3 +23,14 @@ def process_friends(friends, summoner):
         except Warrior.DoesNotExist:
             Warrior.objects.create(fb_id=fb_id, fb_image_url=fb_image_url,   
                                    summoner=summoner)
+
+
+def expected(a_score, b_score):
+    import math
+    return 1 / (1 + math.pow(10, (a_score - b_score) / 400))
+
+def win(score, expected, k=24):
+    return score + k * (1-expected)
+
+def loss(score, expected, k=24):
+    return score + k + (0-expected)
