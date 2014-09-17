@@ -1,4 +1,5 @@
-<link href="{{ STATIC_URL }}django_facebook/css/facebook.css" type="text/css" rel="stylesheet" media="all" />
+{% if request.user.is_anonymous %}
+
 {% include 'django_facebook/_facebook_js.html' %}
 
 <form action="{% url 'facebook_connect' %}?facebook_login=1" method="post">
@@ -6,3 +7,11 @@
   {% csrf_token %}
   <a onclick="F.connect(this.parentNode); return false;" href="javascript:void(0);">Connect</a>
 </form>
+
+{% else %}
+
+{% for friend in friends.data %}
+<img src="{{ friend.picture.data.url }}" width="300px" />
+{% endfor %}
+
+{% endif %}
