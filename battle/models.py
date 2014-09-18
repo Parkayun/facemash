@@ -19,7 +19,7 @@ class Warrior(models.Model):
         return {
             'score': data.aggregate(models.Sum('score'))['score__sum'] / data_len,
             'wins':  data.aggregate(models.Sum('wins'))['wins__sum'],
-            'losses': data.aggregate(models.Sum('losses'))['losses__sum'] 
+            'losses': data.aggregate(models.Sum('losses'))['losses__sum']
         }
 
     def get_performance(self):
