@@ -34,7 +34,7 @@ def index(request):
             'second': expected(warriors[1].score, warriors[0].score),
         }
 
-        data['top10warriors'] = Warrior.objects.filter(summoner=profile).order_by('-score')[:10]
+        data['top10warriors'] = Warrior.objects.filter(summoner=profile).order_by('-wins')[:10]
 
     return render_to_response('index.html', data, context_instance=RequestContext(request))
 
@@ -99,7 +99,7 @@ def load_top10(request):
     from battle.models import Warrior
     
     tag = ''
-    for warrior in Warrior.objects.filter(summoner_id=summoner).order_by('-score')[:10]:
+    for warrior in Warrior.objects.filter(summoner_id=summoner).order_by('-wins')[:10]:
         data = warrior.get_all_summoner_data()
         tag += '<tr>'
         tag += '<td valign="top"><img src="'+warrior.fb_image_url+'" width="70" /></td>'
