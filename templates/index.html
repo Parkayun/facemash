@@ -41,8 +41,7 @@ td {font-size:11px;}
 {% if request.user.is_anonymous %}
 
 <img src="http://i.imgur.com/qArS2tm.jpg" style="z-index: -1;" id="bg" />
-{% include 'django_facebook/_facebook_js.html' %}
-
+<script type="text/javascript" src="http://parkayun.kr/static/js/django_facebook.js"></script>
 <form action="{% url 'facebook_connect' %}?facebook_login=1" method="post">
   <input type="hidden" value="1" name="connect" />
   {% csrf_token %}
