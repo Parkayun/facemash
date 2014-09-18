@@ -3,7 +3,7 @@ def get_friends(fb_id, access_token):
     url = u'https://graph.facebook.com/' + str(fb_id) + '/friends?' \
         + u'fields=id,name,picture.type(square).width(1000).height(1000)&' \
         + u'access_token=' + access_token
-    
+
     import requests
     res = requests.get(url)
     return res.content
@@ -21,7 +21,7 @@ def make_warriors(friends, summoner):
                 warrior.fb_image_url = fb_image_url
                 warrior.save()
         except Warrior.DoesNotExist:
-            Warrior.objects.create(fb_id=fb_id, fb_image_url=fb_image_url,   
+            Warrior.objects.create(fb_id=fb_id, fb_image_url=fb_image_url,
                                    summoner=summoner)
 
 

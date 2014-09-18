@@ -34,7 +34,7 @@ def connect(request, graph):
     if not context.get('FACEBOOK_APP_ID'):
         message = 'Please specify a Facebook app id and ensure the context processor is enabled'
         raise ValueError(message)
-    
+
     try:
         response = _connect(request, graph)
     except open_facebook_exceptions.FacebookUnreachable as e:

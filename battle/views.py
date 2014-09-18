@@ -15,18 +15,18 @@ def index(request):
 
         from battle.models import Warrior
         warriors = Warrior.objects.filter(summoner=profile)
-        
+
         if not warriors.exists():
             from battle.utils import get_friends, make_warriors
             raw = get_friends(profile.facebook_id, profile.access_token)
-            
+
             make_warriors(json.loads(raw)['data'], profile)
 
         warriors = list(warriors)
-        
+
         import random
         random.shuffle(warriors)
-        
+
         data['warriors'] = warriors[:2]
         from battle.utils import expected
         data['expected'] = {
@@ -41,7 +41,7 @@ def index(request):
 @transaction.commit_on_success
 def battle(request):
     result = {'status': 'error', 'message': ''}
-    
+
     winner = request.GET.get('w', -1)
     loser = request.GET.get('l', -1)
     summoner = request.GET.get('s', -1)
@@ -52,14 +52,14 @@ def battle(request):
         from battle.models import Warrior
         winner = Warrior.objects.get(fb_id=winner, summoner_id=summoner)
         loser = Warrior.objects.get(fb_id=loser, summoner_id=summoner)
-        
+
         from battle.utils import expected, win ,loss
         winner_expected = expected(loser.score, winner.score)
         winner_new_score = win(winner.score, winner_expected)
         winner.score = winner_new_score
         winner.wins += 1
         winner.save()
-        
+
         loser_expected = expected(winner.score, loser.score)
         loser_new_score = loss(loser.score, loser_expected)
         loser.score = loser_new_score
@@ -67,7 +67,7 @@ def battle(request):
         loser.save()
 
         warriors = list(Warrior.objects.all())
-        
+
         import random
         random.shuffle(warriors)
 
@@ -95,9 +95,9 @@ def battle(request):
 
 def load_top10(request):
     summoner = request.GET.get('s', -1)
-    
+
     from battle.models import Warrior
-    
+
     tag = ''
     for warrior in Warrior.objects.filter(summoner_id=summoner).order_by('-wins')[:10]:
         data = warrior.get_all_summoner_data()
