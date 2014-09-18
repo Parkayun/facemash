@@ -7,7 +7,7 @@ from django_facebook.models import FacebookProfile as Profile
 class Warrior(models.Model):
     summoner = models.ForeignKey(Profile)
     fb_id = models.CharField(unique=True, max_length=50)
-    fb_image_url = models.URLField()
+    fb_image_url = models.TextField()
     score = models.IntegerField(default=1500)
     wins = models.IntegerField(default=0)
     losses = models.IntegerField(default=0)
