@@ -11,11 +11,32 @@ a img {border:0;}
 td {font-size:11px;}
 .image {background-color:#eee;border:1px solid #ddd;border-bottom:1px solid #bbb;padding:5px;}
 
+
+  #bg {
+    min-height: 100%;
+    min-width: 1024px;
+
+    width: 100%;
+    height: auto;
+
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
+
+  @media screen and (max-width: 1024px) {
+    #bg {
+        left: 50%;
+        margin-left: -512px;
+    }
+  }
+
+
 </style>
 </head>
 
 <body>
-
+<img src="http://i.imgur.com/qArS2tm.jpg" style="z-index: -1;" id="bg" />
 <h1>FACEMASH</h1>
 
 {% if request.user.is_anonymous %}
@@ -25,7 +46,9 @@ td {font-size:11px;}
 <form action="{% url 'facebook_connect' %}?facebook_login=1" method="post">
   <input type="hidden" value="1" name="connect" />
   {% csrf_token %}
-  <a onclick="F.connect(this.parentNode); return false;" href="javascript:void(0);">Connect</a>
+  <a onclick="F.connect(this.parentNode); return false;" href="javascript:void(0);">
+<img src="http://i.imgur.com/TSXtq24.png" style="margin-top: 200px;" />
+</a>
 </form>
 
 {% else %}
@@ -35,66 +58,71 @@ td {font-size:11px;}
 <center>
 <table>
 	<tr>
-		<td valign="top" class="image"><a href="javascript:void(0);"><img src="" /></a></td>
-		<td valign="top" class="image"><a href="javascript:void(0);"><img src="" /></a></td>
+		<td valign="top" class="image"><a href="javascript:void(0);" data-fb-id="{{ warriors.0.fb_id }}"><img src="{{ warriors.0.fb_image_url }}" width="300px" /></a></td>
+		<td valign="top" class="image"><a href="javascript:void(0);" data-fb-id="{{ warriors.1.fb_id }}"><img src="{{ warriors.1.fb_image_url }}" width="300px" /></a></td>
 	</tr>
 	<tr>
-		<td>Won: {{ warriors.0.get_all_summoner_data.wins}}, Lost: {{ warriors.0.get_all_summoner_data.losses }}</td>
-		<td>Won: {{ warriors.1.get_all_summoner_data.wins}}, Lost: {{ warriors.1.get_all_summoner_data.losses }}</td>
+		<td class="WLData">Won: {{ warriors.0.get_all_summoner_data.wins}}, Lost: {{ warriors.0.get_all_summoner_data.losses }}</td>
+		<td class="WLData">Won: {{ warriors.1.get_all_summoner_data.wins}}, Lost: {{ warriors.1.get_all_summoner_data.losses }}</td>
 	</tr>
 	<tr>
-		<td>Score: {{ warriors.0.get_all_summoner_data.score}}</td>
-		<td>Score: {{ warriors.1.get_all_summoner_data.score}}</td>
+		<td class="ScoreData">Score: {{ warriors.0.get_all_summoner_data.score}}</td>
+		<td class="ScoreData">Score: {{ warriors.1.get_all_summoner_data.score}}</td>
 	</tr>
 	<tr>
-		<td>Expected: {{ expected.first }}</td>
-		<td>Expected: {{ expected.second }}</td>
+		<td class="ExpectedData">Expected: {{ expected.first }}</td>
+		<td class="ExpectedData">Expected: {{ expected.second }}</td>
 	</tr>
 </table>
 </center>
-<!--
 <h2>Top Rated</h2>
 <center>
 <table>
+  {% for warrior in top10warriors %}
 	<tr>
-		<? foreach($top_ratings as $key => $image) : ?>
-		<td valign="top"><img src="images/<?=$image->filename?>" width="70" /></td>
-		<? endforeach ?>
+		<td valign="top"><img src="{{ warrior.fb_image_url }}" width="70" /></td>
+		<td valign="top">Score: {{ warrior.get_all_summoner_data.score }}</td>
+		<td valign="top">Performance: {{ warrior.get_performance }}</td>
+		<td valign="top">Won: {{ warrior.get_all_summoner_data.wins }}</td>
+		<td valign="top">Lost: {{ warrior.get_all_summoner_data.losses }}</td>
 	</tr>
-	<? /* Remove this to see the scoring
-	<tr>
-		<? foreach($top_ratings as $key => $image) : ?>
-		<td valign="top">Score: <?=$image->score?></td>
-		<? endforeach ?>
-	</tr>
-	<tr>
-		<? foreach($top_ratings as $key => $image) : ?>
-		<td valign="top">Performance: <?=$image->performance?></td>
-		<? endforeach ?>
-	</tr>
-	<tr>
-		<? foreach($top_ratings as $key => $image) : ?>
-		<td valign="top">Won: <?=$image->wins?></td>
-		<? endforeach ?>
-	</tr>
-	<tr>
-		<? foreach($top_ratings as $key => $image) : ?>
-		<td valign="top">Lost: <?=$image->losses?></td>
-		<? endforeach ?>
-	</tr>
-	*/ ?>
+  {% endfor %}
 </table>
 </center>
--->
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script type="text/javascript">
 	$(document).ready(function() {
 		$('.image a').on('click', function(e) {
 			e.preventDefault();
-			var wFbId = $(e.currentTarget).attr('data-fb-id');
-			$.get('/battle', {'w': wFbId}, function(data) {
-				console.log(data);
-			});
+      var $as = $('.image a');
+      
+      var wIdx = $('a').index($(this));
+      var lIdx = wIdx == 1 ? 0 : 1;
+      
+      var wFbId = $as.eq(wIdx).attr('data-fb-id');
+			var lFbId = $as.eq(lIdx).attr('data-fb-id');
+
+      $.get('/battle', {'w': wFbId, 'l': lFbId, 's': '{{ summoner_id }}'}, function(data) {
+			  if (data.status=='success') {
+          var lWarrior = $('.image a').eq(0);
+          lWarrior.attr('data-fb-id', data.next1.fb_id);
+          lWarrior.find('img').attr('src', data.next1.fb_image_url);
+          $('.WLData').eq(0).html('Won: '+data.next1.wins+', Lost: '+data.next1.losses);
+          $('.ScoreData').eq(0).html('Score: '+data.next1.score);
+          $('.ExpectedData').eq(0).html('Expected: '+data.next1.expected);
+
+          var rWarrior = $('.image a').eq(1);
+          rWarrior.attr('data-fb-id', data.next2.fb_id);
+          rWarrior.find('img').attr('src', data.next2.fb_image_url);
+          $('.WLData').eq(1).html('Won: '+data.next2.wins+', Lost: '+data.next2.losses);
+          $('.ScoreData').eq(1).html('Score: '+data.next2.score);
+          $('.ExpectedData').eq(1).html('Expected: '+data.next2.expected);
+
+          $.get('/top10?s={{ summoner_id }}', function(d) {
+            $('table').eq(1).html(d);
+          });
+        }
+      });
 		});
 	});
 </script>

@@ -15,4 +15,5 @@ urlpatterns = patterns('',
 
     url(r'^$', 'battle.views.index', name='index'),
     url(r'^battle$', 'battle.views.battle', name='battle'),
+    url(r'^top10$', 'battle.views.load_top10', name='load_top_10'),
 )
